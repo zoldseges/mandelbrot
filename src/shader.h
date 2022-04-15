@@ -3,6 +3,6 @@
 
 #include <GL/glew.h>
 
-GLuint compile_shaders();
+void compile_shaders(GLuint *shader, GLuint *uniform_model);
 
 #endif /* SHADER_H_ */

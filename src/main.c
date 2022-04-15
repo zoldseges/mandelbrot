@@ -11,14 +11,65 @@ typedef struct Mesh {
   GLuint IBO;
 } Mesh;
 
+void print_mat(GLfloat mat4[]) {
+  printf("----------------------------\n");
+  for(int j = 0; j < 4; j++) {
+    printf("[");
+    for(int i = 0; i < 4; i++) {
+      if( i != 0 ) printf(", ");
+      printf("%5.2f", mat4[4*j + i]);
+    }
+    printf("]\n");
+  }
+}
+
+void set_identity_matrix(GLfloat mat4[]) {
+  for(int i = 0; i < 16; i++) {
+    if(i % 5 == 0) mat4[i] = 1;
+    else mat4[i] = 0;
+  }
+}
+
+void multiply_matrix(GLfloat a_mat4[], const GLfloat b_mat4[]) {
+  GLfloat a_orig[16];
+  memcpy(a_orig, a_mat4, 16*sizeof(GLfloat));
+  for(int j = 0; j < 4; j++) {
+    for(int i = 0; i < 4; i++) {
+      GLfloat acc = 0;
+      for(int x = 0; x < 4; x++) {
+	acc += a_orig[4*j + x] * b_mat4[4*x + i % 4];
+      }
+      a_mat4[4*j + i] = acc;
+    }
+  }
+}
+
+void scale(GLfloat mat4[], GLfloat vec3[]) {
+  GLfloat transform[16];
+  set_identity_matrix(transform);
+  for(int i = 0; i < 3; i++) {
+    transform[i*5] *= vec3[i];
+  }
+  multiply_matrix(mat4, transform);
+}
+
+void translate(GLfloat mat4[], GLfloat vec3[]) {
+  GLfloat transform[16];
+  set_identity_matrix(transform);
+  for(int i = 0; i < 3; i++) {
+    transform[3+i*4] += vec3[i];
+  }
+  multiply_matrix(mat4, transform);
+}
+
 // TODO swich to 2D model instead of 3D
 void create_plane(Mesh *mesh) {
 
   GLfloat vertices[] = {
-    -1.0, 1.0, 0.0,
-    1.0, 1.0, 0.0,
-    1.0, -1.0, 0.0,
-    -1.0, -1.0, 0.0,
+    -2.0, 2.0, 0.0,
+    2.0, 2.0, 0.0,
+    2.0, -2.0, 0.0,
+    -2.0, -2.0, 0.0,
   };
 
   unsigned int indices[] = {
@@ -49,11 +100,15 @@ void create_plane(Mesh *mesh) {
 int main(int argc, char *argv[]) {
   GLFWwindow *window = init_window(800, 600);
   GLuint shader = 0;
+  GLuint uniform_model = 0;
   Mesh plane = { 0 };
+  GLfloat model[16] = {0};
+  
   init_context(window);
 
-  shader = compile_shaders();
+  compile_shaders(&shader, &uniform_model);
   create_plane(&plane);
+
   while(!glfwWindowShouldClose(window)) {
     glfwPollEvents();
 
@@ -61,6 +116,14 @@ int main(int argc, char *argv[]) {
     glClear(GL_COLOR_BUFFER_BIT);
 
     glUseProgram(shader);
+
+    set_identity_matrix(model);
+    GLfloat trans_vec[] = {0.5, 0.2, 0.0};
+    translate(model, trans_vec);
+    GLfloat scale_vec[] = {0.4, 0.4, 0.0};
+    scale(model, scale_vec);
+
+    glUniformMatrix4fv(uniform_model, 1, GL_TRUE, model);
 
     glBindVertexArray(plane.VAO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, plane.IBO);

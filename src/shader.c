@@ -62,35 +62,34 @@ static void add_shader(GLuint program,
   glAttachShader(program, shader);
 }
 
-GLuint compile_shaders() {
-  GLuint shader = 0;
+void compile_shaders(GLuint *shader, GLuint *uniform_model) {
   GLint result = 0;
   GLchar error_log[1024] = { 0 };
 
-  shader = glCreateProgram();
-  if(!shader) {
+  *shader = glCreateProgram();
+  if(!*shader) {
     fprintf(stderr, "Error initializing shader program\n");
     exit(1);
   }
 
-  add_shader(shader, "shaders/shader.vert", GL_VERTEX_SHADER);
-  add_shader(shader, "shaders/shader.frag", GL_FRAGMENT_SHADER);
+  add_shader(*shader, "shaders/shader.vert", GL_VERTEX_SHADER);
+  add_shader(*shader, "shaders/shader.frag", GL_FRAGMENT_SHADER);
 
-  glLinkProgram(shader);
-  glGetProgramiv(shader, GL_LINK_STATUS, &result);
+  glLinkProgram(*shader);
+  glGetProgramiv(*shader, GL_LINK_STATUS, &result);
   if(!result) {
-    glGetProgramInfoLog(shader, sizeof(error_log), NULL, error_log);
+    glGetProgramInfoLog(*shader, sizeof(error_log), NULL, error_log);
     printf("error linking program: `%s`\n", error_log);
     exit(1);
   }
 
-  glValidateProgram(shader);
-  glGetProgramiv(shader, GL_VALIDATE_STATUS, &result);
+  glValidateProgram(*shader);
+  glGetProgramiv(*shader, GL_VALIDATE_STATUS, &result);
   if(!result) {
-    glGetProgramInfoLog(shader, sizeof(error_log), NULL, error_log);
+    glGetProgramInfoLog(*shader, sizeof(error_log), NULL, error_log);
     printf("error validating program: `%s`\n", error_log);
     exit(1);
   }
 
-  return shader;
+  *uniform_model = glGetUniformLocation(*shader, "model");
 }
