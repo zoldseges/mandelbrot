@@ -28,8 +28,6 @@ void main()
   Comp c = Comp(frag_pos.x, frag_pos.y);
   Comp z = Comp(0, 0);
   int count = 0;
-  float red = 0;
-
   for(count = 0; count <= LIMIT; count++) {
     z = add(mul(z, z), c);
     if (dist(z) >= 4) {
@@ -37,6 +35,5 @@ void main()
     }
   }
 
-  red = count / LIMIT;
-  color = vec4(red, 0, 0, 0);
+  color = vec4(float(count) / LIMIT, 0, 0, 0);
 }
