@@ -44,7 +44,7 @@ void multiply_matrix(GLfloat a_mat4[], const GLfloat b_mat4[]) {
   }
 }
 
-void scale(GLfloat mat4[], GLfloat vec3[]) {
+void scale_mat(GLfloat mat4[], GLfloat vec3[]) {
   GLfloat transform[16];
   set_identity_matrix(transform);
   for(int i = 0; i < 3; i++) {
@@ -53,7 +53,7 @@ void scale(GLfloat mat4[], GLfloat vec3[]) {
   multiply_matrix(mat4, transform);
 }
 
-void translate(GLfloat mat4[], GLfloat vec3[]) {
+void translate_mat(GLfloat mat4[], GLfloat vec3[]) {
   GLfloat transform[16];
   set_identity_matrix(transform);
   for(int i = 0; i < 3; i++) {
@@ -97,12 +97,42 @@ void create_plane(Mesh *mesh) {
   glBindVertexArray(0);
 }
 
+void handle_keys(GLfloat *scale, GLfloat *x, GLfloat *y) {
+  GLfloat dscale = 1.01;
+  GLfloat dmov = 0.01 / *scale;
+
+  if (is_key_pressed(GLFW_KEY_W)) {
+    *y -= dmov;
+  }
+  if (is_key_pressed(GLFW_KEY_S)) {
+    *y += dmov;
+  }
+  if (is_key_pressed(GLFW_KEY_D)) {
+    *x -= dmov;
+  }
+  if (is_key_pressed(GLFW_KEY_A)) {
+    *x += dmov;
+  }
+
+  if (is_key_pressed(GLFW_KEY_K)) {
+    *scale *= dscale;
+  }
+  if (is_key_pressed(GLFW_KEY_J)) {
+    *scale /= dscale;
+  }
+}
+
 int main(int argc, char *argv[]) {
   GLFWwindow *window = init_window(800, 600);
   GLuint shader = 0;
   GLuint uniform_model = 0;
   Mesh plane = { 0 };
   GLfloat model[16] = {0};
+
+  /* movement */
+  GLfloat scale = 0.5;
+  GLfloat x = 0.0;
+  GLfloat y = 0.0;
   
   init_context(window);
 
@@ -116,12 +146,15 @@ int main(int argc, char *argv[]) {
     glClear(GL_COLOR_BUFFER_BIT);
 
     glUseProgram(shader);
+    
+    handle_keys(&scale, &x, &y);
 
+    /* tranformations */
     set_identity_matrix(model);
-    GLfloat trans_vec[] = {0.5, 0.2, 0.0};
-    translate(model, trans_vec);
-    GLfloat scale_vec[] = {0.4, 0.4, 0.0};
-    scale(model, scale_vec);
+    GLfloat scale_vec[] = {scale, scale, 0.0};
+    scale_mat(model, scale_vec);
+    GLfloat trans_vec[] = {x, y, 0.0};
+    translate_mat(model, trans_vec);
 
     glUniformMatrix4fv(uniform_model, 1, GL_TRUE, model);
 
