@@ -8,8 +8,8 @@
 static bool glob_keys[KEY_COUNT];
 
 static void handle_resize(GLFWwindow *window, int width, int height) {
-  int min = width < height ? width : height;
-  glViewport(0, 0, min, min);
+  int max = width > height ? width : height;
+  glViewport(0, 0, max, max);
 }
 
 #pragma GCC diagnostic push

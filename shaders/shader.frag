@@ -32,7 +32,7 @@ void main()
   for(count = 0; count <= LIMIT; count++) {
     z = add(mul(z, z), c);
     if (dist(z) >= 4) {
-      color = vec4(float(count) / LIMIT, 0, 0, 0);
+      color = vec4(1-(float(count) / LIMIT), 0, 0, 0);
       break;
     }
   }
