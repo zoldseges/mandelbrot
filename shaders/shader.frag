@@ -4,7 +4,7 @@
 
 in vec4 frag_pos;
 
-out vec4 color;
+out vec4 outcolor;
 
 struct Comp {
   float re;
@@ -25,15 +25,16 @@ float dist(Comp a) {
 
 void main()
 {
+  vec4 color = vec4(0,0,0,0);
   Comp c = Comp(frag_pos.x, frag_pos.y);
   Comp z = Comp(0, 0);
   int count = 0;
   for(count = 0; count <= LIMIT; count++) {
     z = add(mul(z, z), c);
     if (dist(z) >= 4) {
+      color = vec4(float(count) / LIMIT, 0, 0, 0);
       break;
     }
   }
-
-  color = vec4(float(count) / LIMIT, 0, 0, 0);
+  outcolor = color;
 }
