@@ -73,7 +73,7 @@ void compile_shaders(GLuint *shader, GLuint *uniform_model) {
   }
 
   add_shader(*shader, "shaders/shader.vert", GL_VERTEX_SHADER);
-  add_shader(*shader, "shaders/shader.frag", GL_FRAGMENT_SHADER);
+  add_shader(*shader, "shaders/viridis.frag", GL_FRAGMENT_SHADER);
 
   glLinkProgram(*shader);
   glGetProgramiv(*shader, GL_LINK_STATUS, &result);
