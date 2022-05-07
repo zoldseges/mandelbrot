@@ -24,7 +24,10 @@ clean:
 	rm build/*
 	rm mandelbrot
 
-test: test/bin/complex
+test: test/bin/complex test/bin/count
 
 test/bin/complex: test/test_complex.c src/compute.c src/compute.h
+	$(CC) -o $@ $< $(LIBS) $(FLAGS)
+
+test/bin/count: test/test_count.c src/compute.c src/compute.h
 	$(CC) -o $@ $< $(LIBS) $(FLAGS)
