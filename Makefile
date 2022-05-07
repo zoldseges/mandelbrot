@@ -1,6 +1,6 @@
 CC := gcc
 FLAGS := -Wall -Wextra -pedantic -g
-PKGS := glfw3 glew opengl
+PKGS := glfw3 glew opengl gmp
 LIBS := $(shell pkg-config --libs --cflags $(PKGS))
 
 OBJS := $(patsubst build/%.c,build/%.o,$(wildcard src/*.c))
@@ -14,7 +14,7 @@ build/%.d: src/%.c
 	$(CC) -MM -MT $(patsubst build/%.d,build/%.o,$@) $< > $@
 
 build/%.o: src/%.c
-	$(CC) -o $@ -o $< $(LIBS) $(FLAGS)
+	$(CC) -c -o $@ $< $(LIBS) $(FLAGS)
 
 mandelbrot: $(OBJS)
 	$(CC) -o $@ $^ $(LIBS) $(FLAGS)
@@ -23,3 +23,11 @@ mandelbrot: $(OBJS)
 clean:
 	rm build/*
 	rm mandelbrot
+
+test: test/bin/complex test/bin/count
+
+test/bin/complex: test/test_complex.c src/compute.c src/compute.h
+	$(CC) -o $@ $< $(LIBS) $(FLAGS)
+
+test/bin/count: test/test_count.c src/compute.c src/compute.h
+	$(CC) -o $@ $< $(LIBS) $(FLAGS)

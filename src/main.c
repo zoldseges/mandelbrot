@@ -66,10 +66,10 @@ void translate_mat(GLfloat mat4[], GLfloat vec3[]) {
 void create_plane(Mesh *mesh) {
 
   GLfloat vertices[] = {
-    -2.0, 2.0, 0.0,
-    2.0, 2.0, 0.0,
-    2.0, -2.0, 0.0,
-    -2.0, -2.0, 0.0,
+    -4.0, 4.0, 0.0,
+    4.0, 4.0, 0.0,
+    4.0, -4.0, 0.0,
+    -4.0, -4.0, 0.0,
   };
 
   unsigned int indices[] = {
@@ -155,7 +155,6 @@ int main(int argc, char *argv[]) {
     scale_mat(model, scale_vec);
     GLfloat trans_vec[] = {x, y, 0.0};
     translate_mat(model, trans_vec);
-
     glUniformMatrix4fv(uniform_model, 1, GL_TRUE, model);
 
     glBindVertexArray(plane.VAO);
