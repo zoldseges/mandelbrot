@@ -13,8 +13,8 @@ struct sscreen {
   mpf_t dy;
 } screen;
 
-void init_screen(screen *scr, GLuint width, GLuint height);
-void free_screen(screen *scr);
-void fill_screen(screen *scr, char *top_left, char *bot_right);
+void init_screen(struct sscreen *scr, GLuint width, GLuint height);
+void free_screen(struct sscreen *scr);
+void fill_screen(struct sscreen *scr, double d_blx, double d_bly, double d_trx, double d_try);
 
 #endif SCREEN_H_
